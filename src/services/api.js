@@ -2,7 +2,17 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: '/api/erp',
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  transformRequest: [(data) => {
+    if (data && typeof data === 'object') {
+      const params = new URLSearchParams();
+      for (const [key, val] of Object.entries(data)) {
+        params.append(key, typeof val === 'object' ? JSON.stringify(val) : val);
+      }
+      return params.toString();
+    }
+    return data;
+  }],
 });
 
 api.interceptors.request.use((config) => {
